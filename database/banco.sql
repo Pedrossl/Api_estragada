@@ -44,21 +44,33 @@ CREATE TABLE missoes (
 -- ── DADOS DE EXEMPLO ───────────────────────────────────────────────────────────
 
 INSERT INTO pilotos (nome, patente, status, horas_voo) VALUES
-  ('Han Solo',      'Comandante', 'ativo',   8500),
-  ('Rey Skywalker', 'Capitão',    'ativo',   3200),
-  ('Poe Dameron',   'Tenente',    'inativo', 5100);
+  ('Han Solo',       'Comandante', 'ativo',   8500),
+  ('Rey Skywalker',  'Capitão',    'ativo',   3200),
+  ('Poe Dameron',    'Tenente',    'inativo', 5100),
+  ('Leia Organa',    'General',    'ativo',   6700),
+  ('Finn',           'Recruta',    'inativo',  900);
 
 INSERT INTO planetas (nome, galaxia, habitavel) VALUES
-  ('Tatooine',  'Via Láctea', 1),
-  ('Coruscant', 'Via Láctea', 1),
-  ('Hoth',      'Via Láctea', 0);
+  ('Tatooine',   'Via Láctea',  1),
+  ('Coruscant',  'Via Láctea',  1),
+  ('Hoth',       'Via Láctea',  0),
+  ('Endor',      'Via Láctea',  1),
+  ('Mustafar',   'Outer Rim',   0);
 
+-- Naves COM piloto
 INSERT INTO naves (nome, modelo, status, capacidade_carga, piloto_id) VALUES
   ('Millennium Falcon', 'YT-1300', 'ativa',      5000, 1),
   ('X-Wing T-70',       'T-70',    'ativa',      1000, 2),
   ('Black One',         'T-70',    'manutencao', 1000, 3);
 
+-- Naves SEM piloto (piloto_id NULL) — devem aparecer no GET /naves com piloto: null
+INSERT INTO naves (nome, modelo, status, capacidade_carga, piloto_id) VALUES
+  ('Ghost',        'VCX-100', 'ativa', 3000, NULL),
+  ('Razor Crest',  'ST-70',   'ativa', 2000, NULL);
+
 INSERT INTO missoes (titulo, tipo, status, nave_id, piloto_id, planeta_id, carga_kg, data_partida) VALUES
-  ('Entrega em Tatooine',  'transporte', 'concluida',    1, 1, 1, 2000, '2024-01-10'),
-  ('Exploração em Hoth',   'exploracao', 'em_andamento', 2, 2, 3,    0, '2024-06-01'),
-  ('Resgate em Coruscant', 'resgate',    'planejada',    1, 1, 2,    0, '2024-12-01');
+  ('Entrega em Tatooine',   'transporte', 'concluida',    1, 1, 1, 2000, '2024-01-10'),
+  ('Exploração em Hoth',    'exploracao', 'em_andamento', 2, 2, 3,    0, '2024-06-01'),
+  ('Resgate em Coruscant',  'resgate',    'planejada',    1, 1, 2,    0, '2024-12-01'),
+  ('Patrulha em Endor',     'exploracao', 'planejada',    1, 4, 4,    0, '2025-03-15'),
+  ('Carga para Coruscant',  'transporte', 'cancelada',    2, 2, 2,  800, '2025-04-01');

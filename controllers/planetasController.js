@@ -11,7 +11,7 @@ async function listar(req, res) {
 
 async function buscarPorId(req, res) {
   try {
-    const [rows] = await db.query("SELECT * FROM planetas WHERE id = ?", [req.params.id]);
+    const [rows] = await db.query("SELECT * FROM planetas");
     if (!rows.length) return res.status(404).json({ erro: "Planeta não encontrado" });
     res.json(rows[0]);
   } catch (err) {

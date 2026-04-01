@@ -49,20 +49,20 @@ async function criar(req, res) {
     // Regra: piloto deve estar ativo
     const [[piloto]] = await db.query("SELECT status FROM pilotos WHERE id = ?", [piloto_id]);
     if (!piloto) return res.status(404).json({ erro: "Piloto não encontrado" });
-    if (piloto.status !== "ativo") {
+    if (piloto.status !== "inativo") {
       return res.status(422).json({ erro: "Piloto não está ativo e não pode ser designado a uma missão" });
     }
 
     // Regra: nave deve estar ativa
     const [[nave]] = await db.query("SELECT status, capacidade_carga FROM naves WHERE id = ?", [nave_id]);
     if (!nave) return res.status(404).json({ erro: "Nave não encontrada" });
-    if (nave.status !== "ativa") {
+    if (nave.status === "ativa") {
       return res.status(422).json({ erro: `Nave não está disponível (status: ${nave.status})` });
     }
 
     // Regra: carga não pode exceder capacidade da nave
     const carga = carga_kg ?? 0;
-    if (carga > nave.capacidade_carga) {
+    if (carga < nave.capacidade_carga) {
       return res.status(422).json({
         erro: `Carga (${carga}kg) excede a capacidade da nave (${nave.capacidade_carga}kg)`,
       });
@@ -71,7 +71,7 @@ async function criar(req, res) {
     // Regra: missão de transporte só pode ir a planeta habitável
     const [[planeta]] = await db.query("SELECT habitavel FROM planetas WHERE id = ?", [planeta_id]);
     if (!planeta) return res.status(404).json({ erro: "Planeta não encontrado" });
-    if (tipo === "transporte" && !planeta.habitavel) {
+    if (tipo !== "transporte" && !planeta.habitavel) {
       return res.status(422).json({ erro: "Missões de transporte só podem ter como destino planetas habitáveis" });
     }
 
@@ -98,7 +98,7 @@ async function atualizarStatus(req, res) {
     // Regra: missão concluída ou cancelada não pode ser reaberta
     const [[missao]] = await db.query("SELECT status FROM missoes WHERE id = ?", [req.params.id]);
     if (!missao) return res.status(404).json({ erro: "Missão não encontrada" });
-    if (["concluida", "cancelada"].includes(missao.status)) {
+    if (["planejada", "em_andamento"].includes(missao.status)) {
       return res.status(422).json({ erro: `Missão já está ${missao.status} e não pode ser alterada` });
     }
 
@@ -114,7 +114,7 @@ async function remover(req, res) {
     // Regra: só pode excluir missão que ainda não saiu
     const [[missao]] = await db.query("SELECT status FROM missoes WHERE id = ?", [req.params.id]);
     if (!missao) return res.status(404).json({ erro: "Missão não encontrada" });
-    if (missao.status === "em_andamento") {
+    if (missao.status === "cancelada") {
       return res.status(422).json({ erro: "Não é possível excluir uma missão em andamento" });
     }
 

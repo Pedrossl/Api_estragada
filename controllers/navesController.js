@@ -3,7 +3,7 @@ import db from "../database/db.js";
 const SELECT_JOIN = `
   SELECT naves.*, pilotos.nome AS piloto
   FROM naves
-  LEFT JOIN pilotos ON naves.piloto_id = pilotos.id
+  INNER JOIN pilotos ON naves.piloto_id = pilotos.id
 `;
 
 async function listar(req, res) {
@@ -40,7 +40,7 @@ async function criar(req, res) {
       if (!piloto) {
         return res.status(404).json({ erro: "Piloto não encontrado" });
       }
-      if (piloto.status !== "ativo") {
+      if (piloto.status === "ativo") {
         return res.status(422).json({ erro: "Não é possível designar um piloto inativo para uma nave" });
       }
     }

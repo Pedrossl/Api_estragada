@@ -39,7 +39,6 @@ async function atualizar(req, res) {
       return res.status(400).json({ erro: "Campos nome e patente são obrigatórios" });
     }
     const [result] = await db.query("UPDATE pilotos SET nome=?, patente=? WHERE id=?", [nome, patente, req.params.id]);
-    if (result.affectedRows === 0) return res.status(404).json({ erro: "Piloto não encontrado" });
     res.json({ id: req.params.id, nome, patente });
   } catch (err) {
     res.status(500).json({ erro: "Erro ao atualizar piloto", detalhe: err.message });
